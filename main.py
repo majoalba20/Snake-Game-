@@ -3,6 +3,7 @@ from food import Food
 from snake import Snake
 from food import Food
 import time
+from scoreboard import Scorebord
 
 #crear el escenario
 screen = Screen() #instanciar obj
@@ -14,6 +15,9 @@ screen.tracer(0) #Quitamos animación de movimiento
 
 snake = Snake() #crear - instanciar obj
 food = Food()
+
+#tablero de puntos
+score = Scorebord()
 
 #movimiento de la serpiente
 screen.listen()
@@ -30,5 +34,24 @@ while game_is_on:
     time.sleep(0.2) #velocidad de los cuadros ms
 
     snake.move()
+
+    #detectar colision
+    if snake.head.distance(food) < 15:
+        food.refresh()
+        score.increase_score()
+        snake.extends()
+
+    #detectar las paredes
+    if snake.head.xcor() > 280 or snake.head.xcor() < -280 or snake.head.ycor() < -280 or snake.head.ycor() > 280:
+        game_is_on = False
+        score.game_over()
+
+    #detectar la colision de la cola
+    for segment in snake.segments:
+        if segment == snake.head:
+            pass
+        elif snake.head.distance(segment) < 10:
+            game_is_on = False
+            score.game_over()
 
 screen.exitonclick()
